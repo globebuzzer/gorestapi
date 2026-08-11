@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -36,6 +37,7 @@ func (a *App) Initialize() {
 func (a *App) initalizeRoutes() {
 	a.Router.HandleFunc("/products", a.allProducts).Methods("GET")
 	a.Router.HandleFunc("/product/{id}", a.fetchProduct).Methods("GET")
+	a.Router.HandleFunc("/products", a.newProduct).Methods("POST")
 }
 
 func (a *App) allProducts(w http.ResponseWriter, r *http.Request) {
@@ -58,6 +60,22 @@ func (a *App) fetchProduct(w http.ResponseWriter, r *http.Request) {
 	err := p.getProduct(a.DB)
 	if err != nil {
 		fmt.Printf("getProduct error: %s\n", err.Error())
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, p)
+}
+
+// curl -X POST localhost:9003 -H "Content-Type: application/json"
+func (a *App) newProduct(w http.ResponseWriter, r *http.Request) {
+	reqBody, _ := io.ReadAll(r.Body)
+	var p product
+	json.Unmarshal(reqBody, &p)
+
+	err := p.createProduct(a.DB)
+	if err != nil {
+		fmt.Printf("newProduct error: %s\n", err.Error())
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
