@@ -66,9 +66,8 @@ func (a *App) fetchProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) Run() {
-	http.HandleFunc("/", helloWorld)
 	fmt.Println("Server started and listening on port ", a.Port)
-	log.Fatal(http.ListenAndServe(a.Port, nil))
+	log.Fatal(http.ListenAndServe(a.Port, a.Router))
 }
 
 // Helper functions
