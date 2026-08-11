@@ -1,0 +1,14 @@
+{
+    "customerName": "blah1",
+    "total": 30,"status": "shipped",
+    "items": [
+                {
+                    "product_id": 2, 
+                    "quantity": 1
+                },
+                {
+                    "product_id": 7,
+                    "quantity": 3
+                }
+             ]
+}
